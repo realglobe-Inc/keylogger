@@ -6,7 +6,7 @@ PLIST=keylogger.plist
 INSTALLDIR=/usr/local/bin
 
 all: $(SOURCES)
-	$(CC) $(SOURCES) $(CFLAGS) -o $(EXECUTABLE)
+	$(CC) -std=c11 $(SOURCES) $(CFLAGS) -o $(EXECUTABLE)
 
 install:
 	mkdir -p $(INSTALLDIR)
